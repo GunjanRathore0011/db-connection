@@ -1,12 +1,11 @@
 import express from "express";
 import sequelize from "./config/db.js";
 import userRoute from "./routes/userRoute.js";
-import User from "./models/User.js";
-import upload from "./config/multer.js";
-import streamifier from 'streamifier';
-import cloudinary from "./config/cloudinary.js";
-const app = express();
+import authRoute from "./routes/authRoute.js";
+import cookieParser from "cookie-parser";
 
+const app = express();
+app.use(cookieParser());
 app.use(express.json());
 const initialize = async () => {
   try {
@@ -22,5 +21,6 @@ const initialize = async () => {
 initialize();
 
 app.use("/contact", userRoute);
+app.use("/auth",authRoute);
 
 app.listen(3000, () => console.log("Server running on port 3000"));

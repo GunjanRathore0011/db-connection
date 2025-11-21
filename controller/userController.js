@@ -1,17 +1,16 @@
-import { HostNotFoundError, Where } from "@sequelize/core";
+
 import User from "../models/User.js";
 import { validateid, validateUpdatedUser, validateUser } from "../validation/validateUser.js";
-import { addUserContact } from "../services/addUserContact.js";
-import { getUserContact } from "../services/getUserContact.js";
-import { deleteUserContact } from "../services/deleteUserContact.js";
-import { updateUserContact } from "../services/updateUserContact.js";
+import { addUserContact } from "../services/userServices/addUserContact.js";
+import { getUserContact } from "../services/userServices/getUserContact.js";
+import { deleteUserContact } from "../services/userServices/deleteUserContact.js";
+import { updateUserContact } from "../services/userServices/updateUserContact.js";
 
 export const addContact = async (req, res) => {
   try {
     const { name, phone, address, label } = req.body;
 
     const checkValid= await validateUser({name,phoneNumber: phone, address, label});
-
 
     if(!checkValid){
         return res.status(404).json({

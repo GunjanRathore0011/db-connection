@@ -25,6 +25,7 @@ const User = sequelize.define("User", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   }
+  
 });
 
 export default User;

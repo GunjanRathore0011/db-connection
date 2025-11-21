@@ -14,8 +14,9 @@ export async function validateUser(user){
     })
     // console.log(user)
     const result= await userSchema.validate(user);
+    // console.log(result);
     if(result.error) {
-        console.log("error",result)
+        // console.log("error",result)
         return null;
     }
     else return result;

@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from "../../models/User.js";
 
 export async function updateUserContact({ name, phone, address, label ,id}) {
   try {
