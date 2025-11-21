@@ -1,63 +1,45 @@
-import { Where } from "@sequelize/core";
+import { HostNotFoundError, Where } from "@sequelize/core";
 import User from "../models/User.js";
-import cloudinary from "../config/cloudinary.js";
+import { validateid, validateUpdatedUser, validateUser } from "../validation/validateUser.js";
+import { addUserContact } from "../services/addUserContact.js";
+import { getUserContact } from "../services/getUserContact.js";
+import { deleteUserContact } from "../services/deleteUserContact.js";
+import { updateUserContact } from "../services/updateUserContact.js";
 
 export const addContact = async (req, res) => {
   try {
     const { name, phone, address, label } = req.body;
 
-    // const image = req.file;
-    // console.log(image);
+    const checkValid= await validateUser({name,phoneNumber: phone, address, label});
 
-    if (!name || !phone || !address || !label) {
-      return res.status(404).json({
-        success: false,
-        message: "All fields are required.",
-      });
+
+    if(!checkValid){
+        return res.status(404).json({
+            success:false,
+            message: "Entered invalid details."
+        })
     }
-    if (phone.trim().length != 10)
-      return res.status(404).json({
-        success: false,
-        message: "Enter correct phone number.",
-      });
-
-    const userExist = await User.findOne({ where: { phoneNumber: phone } });
-
-    if (userExist) {
-      return res.status(404).json({
-        success: false,
-        message: "Contact already exists.",
-      });
-    }
-    // cloudinary.uploader
-    //   .upload(image.originalname)
-    //   .then((result) => console.log(result));
-
-    const user = await User.create({
-      name,
-      phoneNumber: phone,
-      address,
-      label,
-    });
+    const result=await addUserContact({name, phone, address, label});
 
     return res.status(200).json({
       success: true,
       message: "Contact Created Succuessfully.",
-      user,
+      result,
     });
+
   } catch (error) {
     console.log(error.message)
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error" + error,
     });
   }
 };
 
 export const getContact = async (req, res) => {
   try {
-    const allContacts = await User.findAll();
 
+    const allContacts=await getUserContact();
     return res.status(200).json({
       success: true,
       message: "Fetched all contacts",
@@ -74,17 +56,18 @@ export const getContact = async (req, res) => {
 export const deleteContact = async (req, res) => {
   try {
     const id = req.params.id;
+    console.log(id)
+    const checkValid= await validateid({id});
 
-    const userExist = await User.findByPk(id);
+    if(!checkValid){
+        return res.status(404).json({
+            success:false,
+            message: "Invalid id."
+        })
+    }    
 
-    if (!userExist) {
-      return res.status(404).json({
-        success: false,
-        message: "Contact does not exits.",
-      });
-    }
-
-    await userExist.destroy();
+     await deleteUserContact(id);
+    
     return res.status(200).json({
       success: true,
       message: "User deleted successfully..",
@@ -92,7 +75,7 @@ export const deleteContact = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error " + error,
     });
   }
 };
@@ -102,27 +85,17 @@ export const updateContact = async (req, res) => {
     const id = req.params.id;
     const { name, phone, address, label } = req.body;
 
-    const userExist = await User.findByPk(id);
+    const checkValid= await validateUpdatedUser({name,phoneNumber: phone, address, label, id});
 
-    if (!userExist) {
-      return res.status(404).json({
-        success: false,
-        message: "Contact does not exits.",
-      });
+    if(!checkValid){
+        return res.status(404).json({
+            success:false,
+            message: "Entered invalid details."
+        })
     }
 
-    await User.update(
-      {
-        name: name ? name : userExist.name,
-        phoneNumber: phone ? phone : userExist.phoneNumber,
-        address: address ? address : userExist.address,
-        label: label ? label : userExist.label,
-      },
-      {
-        where: { id: id },
-      }
-    );
-    const updatedUser = await User.findByPk(id);
+    const updatedUser = await updateUserContact({name , phone , address, label, id});
+
     return res.status(200).json({
       success: true,
       message: "User updated successfully.",
@@ -131,7 +104,7 @@ export const updateContact = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error "+  error,
     });
   }
 };
