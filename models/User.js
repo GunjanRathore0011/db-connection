@@ -6,10 +6,6 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false
   },
-  img: {
-    type: DataTypes.STRING,
-    defaultValue: "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png",
-  },
   phoneNumber:{
     type: DataTypes.STRING(10),
     allowNull: false,
@@ -21,10 +17,7 @@ const User = sequelize.define("User", {
   label:{
     type: DataTypes.ENUM(["Work", "School", "Friends", "Family"]),
   },
-  bookmark:{
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  }
+
   
 });
 

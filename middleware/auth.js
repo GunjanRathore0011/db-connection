@@ -7,11 +7,9 @@ export function authenticateToken(req, res, next)
 { 
     try {
         var authHeader = req.headers['authorization'];
-        console.log(req.cookies.token)
+        // console.log(req.cookies.token)
         var token = authHeader;
 
-        if (token == null) {
-        }
         jwt.verify(token, process.env.secret_key, (err, decoded)=>{
             if (err) {
                 console.log("invalid token");
@@ -19,7 +17,6 @@ export function authenticateToken(req, res, next)
                     message: "Token error",
                 });
             }
-            // console.log(decoded);
             next();
         });
     } catch (error) {

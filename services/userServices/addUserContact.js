@@ -9,7 +9,7 @@ export async function addUserContact({ name, phone, address, label }) {
     }
     const user = await User.create({
       name,
-      phoneNumber: phone,
+      phoneNumber: phone, 
       address,
       label,
     });
@@ -17,6 +17,6 @@ export async function addUserContact({ name, phone, address, label }) {
     return user;
 
   } catch (error) {
-    throw error.message;
+    throw new Error(error);
   }
 }

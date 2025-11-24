@@ -1,5 +1,3 @@
-
-import User from "../models/User.js";
 import { validateid, validateUpdatedUser, validateUser } from "../validation/validateUser.js";
 import { addUserContact } from "../services/userServices/addUserContact.js";
 import { getUserContact } from "../services/userServices/getUserContact.js";
